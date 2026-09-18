@@ -1,4 +1,4 @@
-const baseURL = process.env.REACT_APP_API_URL || 'https://omni-back-jvvppereira.vercel.app/';
+const baseURL = process.env.REACT_APP_API_URL || 'https://omni-back.vercel.app/';
 
 async function request(method, endpoint, data) {
   const url = `${baseURL}${endpoint}`;
