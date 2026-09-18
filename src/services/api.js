@@ -13,7 +13,9 @@ async function request(method, endpoint, data) {
     options.body = JSON.stringify(data);
   }
 
+  console.log(`[API] ${method} ${url}`, data ? data : '');
   const response = await fetch(url, options);
+  console.log(`[API] ${method} ${url} - Status: ${response.status}`);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }));
@@ -24,7 +26,9 @@ async function request(method, endpoint, data) {
     return null;
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log(`[API] ${method} ${url} - Response:`, result);
+  return result;
 }
 
 const api = {
