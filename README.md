@@ -1,68 +1,90 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Omni Frontend
 
-## Available Scripts
+Real-time Twitter-like frontend consuming SSE events from [omni-back](https://github.com/jvvppereira/omni-back).
 
-In the project directory, you can run:
+## 🛠 Tech Stack
 
-### `npm start`
+| Category | Technology | Version | Purpose |
+|----------|------------|---------|---------|
+| **Framework** | React | 16.8 | UI library |
+| **Build Tool** | Create React App | 5.0 | Zero-config bundler |
+| **HTTP Client** | Fetch (native) | Built-in | API requests |
+| **Routing** | React Router | 4.3 | SPA navigation |
+| **Real-time** | EventSource (native) | Built-in | SSE for live updates |
+| **Deployment** | Vercel | - | Serverless hosting |
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 📁 Project Structure
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+```
+src/
+├── components/
+│   └── Tweet.js          # Tweet display component
+├── pages/
+│   ├── Login.js          # Username entry
+│   └── Timeline.js       # Main feed + SSE subscription
+├── services/
+│   └── api.js            # Fetch wrapper (configurable baseURL)
+├── App.js                # Routes
+└── index.js              # Entry point
+```
 
-### `npm test`
+## 🚀 Getting Started
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+- Node.js 18+
+- Backend running (see [omni-back](https://github.com/jvvppereira/omni-back))
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Environment Variables
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `REACT_APP_API_URL` | No | `https://omni-back-jvvppereira.vercel.app/` | Backend API + SSE endpoint |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Local Development
 
-### `npm run eject`
+```bash
+# 1. Install dependencies
+npm install
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# 2. Create .env.local (optional - for local backend)
+echo "REACT_APP_API_URL=http://localhost:3000" > .env.local
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# 3. Start dev server
+npm start
+# Opens http://localhost:3000
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Available Scripts
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+| Command | Description |
+|---------|-------------|
+| `npm start` | Dev server with hot reload |
+| `npm run build` | Production build to `build/` |
+| `npm test` | Run tests (watch mode) |
 
-## Learn More
+## 🔌 Real-time (SSE)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Connects to `${REACT_APP_API_URL}events` via native `EventSource`
+- Events: `tweet` (new tweet), `like` (updated tweet)
+- Auto-reconnects on disconnect
+- Event format: `event: tweet\ndata: {"_id":"...","author":"...",...}\n\n`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🚢 Deployment (Vercel)
 
-### Code Splitting
+1. Connect repo to Vercel
+2. Add Environment Variable: `REACT_APP_API_URL=https://omni-back-jvvppereira.vercel.app/`
+3. Deploy
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## 📡 API Integration
 
-### Analyzing the Bundle Size
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/tweets` | List all tweets (newest first) |
+| `POST` | `/tweets` | Create new tweet |
+| `POST` | `/likes/:id` | Increment like count |
+| `GET` | `/events` | SSE stream for real-time updates |
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+## 📄 License
 
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+MIT

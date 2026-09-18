@@ -3,7 +3,6 @@ import twitterLogo from '../twitter.svg';
 import './Timeline.css';
 import api from '../services/api';
 import Tweet from '../components/Tweet';
-import socket from 'socket.io-client';
 
 export default class Timeline extends Component {
   state = {
@@ -37,19 +36,23 @@ export default class Timeline extends Component {
   }
 
   subscribeToEvents = () => {
-    const io = socket('https://omni-back.herokuapp.com/');
+    const eventSource = new EventSource(`${api.defaults.baseURL}events`);
 
-    io.on('tweet', (data) => {
-      this.setState({ tweets: [data, ...this.state.tweets] });
+    eventSource.addEventListener('tweet', (event) => {
+      const tweet = JSON.parse(event.data);
+      this.setState({ tweets: [tweet, ...this.state.tweets] });
     });
 
-    io.on('like', (data) => {
+    eventSource.addEventListener('like', (event) => {
+      const tweet = JSON.parse(event.data);
       this.setState({
-        tweets: this.state.tweets.map((tweet) =>
-          tweet._id === data._id ? data : tweet
-        )
+        tweets: this.state.tweets.map((t) => t._id === tweet._id ? tweet : t)
       });
     });
+
+    eventSource.onerror = () => {
+      console.log('SSE connection lost, reconnecting...');
+    };
   };
 
   render() {
